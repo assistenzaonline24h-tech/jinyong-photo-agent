@@ -1,13 +1,13 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import OpenAI from "openai";
 import { config } from "./config.js";
 
 export class PhotoAgent {
-  private anthropic: Anthropic;
+  private genAI: GoogleGenerativeAI;
   private openai: OpenAI;
 
   constructor() {
-    this.anthropic = new Anthropic({ apiKey: config.anthropic.apiKey });
+    this.genAI = new GoogleGenerativeAI(config.gemini.apiKey);
     this.openai = new OpenAI({ apiKey: config.openai.apiKey });
   }
 
@@ -32,22 +32,21 @@ The 6 styles must be:
 
 Return ONLY a JSON array of 6 strings (the prompts), nothing else.`;
 
-    const response = await this.anthropic.messages.create({
-      model: config.anthropic.model,
-      max_tokens: 2000,
-      messages: [{
+    const model = this.genAI.getGenerativeModel({ model: config.gemini.model });
+
+    const result = await model.generateContent({
+      contents: [{
         role: "user",
-        content: [
-          { type: "image", source: { type: "base64", media_type: mediaType, data: base64Image } },
-          { type: "text", text: `Dish: ${description}\n\nGenerate 6 professional food photography prompts for this dish.` },
+        parts: [
+          { inlineData: { mimeType: mediaType, data: base64Image } },
+          { text: `${systemPrompt}\n\nDish: ${description}\n\nGenerate 6 professional food photography prompts for this dish.` },
         ],
       }],
-      system: systemPrompt,
     });
 
-    const text = response.content[0].type === "text" ? response.content[0].text : "";
-    const jsonMatch = text.match(/\[[\s\S]*\]/);
-    if (!jsonMatch) throw new Error("Claude did not return valid JSON prompts");
+    const text = result.response.text();
+    const jsonMatch = text.match(/\[([\s\S]*?)\]/);
+    if (!jsonMatch) throw new Error("Gemini did not return valid JSON prompts");
     return JSON.parse(jsonMatch[0]);
   }
 
