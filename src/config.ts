@@ -1,9 +1,9 @@
 import "dotenv/config";
 
 export const config = {
-  anthropic: {
-    apiKey: process.env.ANTHROPIC_API_KEY || "",
-    model: "claude-sonnet-4-20250514" as const,
+  gemini: {
+    apiKey: process.env.GEMINI_API_KEY || "",
+    model: "gemini-2.0-flash" as const,
   },
   openai: {
     apiKey: process.env.OPENAI_API_KEY || "",
