@@ -1,7 +1,7 @@
 {
   "name": "jinyong-photo-agent",
   "version": "1.0.0",
-  "description": "Photo agent for Jin Yong Duomo - Claude AI + OpenAI image generation",
+  "description": "Photo agent for Jin Yong Duomo - Gemini AI + OpenAI image generation",
   "type": "module",
   "scripts": {
     "build": "tsc",
@@ -9,13 +9,13 @@
     "dev": "tsx src/api-server.ts"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.39.0",
+    "@google/generative-ai": "^0.21.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.0",
+    "grammy": "^1.21.0",
     "multer": "^1.4.5-lts.1",
-    "openai": "^4.77.0",
-    "grammy": "^1.21.0"
+    "openai": "^4.77.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
