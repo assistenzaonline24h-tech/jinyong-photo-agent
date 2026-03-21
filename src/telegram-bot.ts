@@ -33,7 +33,7 @@ export function startTelegramBot() {
 
       const response = await fetch(fileUrl);
       const arrayBuf = await response.arrayBuffer();
-      const buffer: Buffer = Buffer.from(new Uint8Array(arrayBuf));
+      const buffer = Buffer.from(new Uint8Array(arrayBuf)) as Buffer;
 
       const prompts = await agent.analyzeAndGeneratePrompts(buffer, caption);
 
@@ -42,9 +42,11 @@ export function startTelegramBot() {
       let successCount = 0;
       for (const prompt of prompts) {
         try {
-          const imageUrl = await agent.generateImage(buffer, prompt);
+          const imageUrl = await agent.generateImage(prompt, buffer);
           if (imageUrl) {
-            await ctx.replyWithPhoto(imageUrl, { caption: prompt.substring(0, 200) });
+            const imgBase64 = imageUrl.toString("base64");
+            const imgBuffer = Buffer.from(imgBase64, "base64");
+            await ctx.replyWithPhoto(new InputFile(imgBuffer, "photo.png"), { caption: prompt.substring(0, 200) });
             successCount++;
           }
         } catch (err) {
