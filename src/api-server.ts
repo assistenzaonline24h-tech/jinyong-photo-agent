@@ -3,6 +3,7 @@ import cors from "cors";
 import multer from "multer";
 import { config } from "./config.js";
 import { PhotoAgent } from "./photo-agent.js";
+import { startTelegramBot } from "./telegram-bot.js";
 
 const app = express();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
@@ -58,3 +59,5 @@ const PORT = parseInt(process.env.PORT || "3001", 10);
 app.listen(PORT, () => {
   console.log("Jin Yong Duomo Photo Agent API on port", PORT);
 });
+// Start Telegram bot alongside Express server
+startTelegramBot();
