@@ -23,19 +23,20 @@ export function startTelegramBot() {
 
   bot.on("message:photo", async (ctx) => {
     const caption = ctx.message.caption || "Piatto del ristorante";
-    
+
     await ctx.reply("Analizzo la foto e genero 6 varianti professionali... Attendi circa 1-2 minuti.");
 
     try {
       const photo = ctx.message.photo[ctx.message.photo.length - 1];
       const file = await ctx.api.getFile(photo.file_id);
       const fileUrl = `https://api.telegram.org/file/bot${TELEGRAM_BOT_TOKEN}/${file.file_path}`;
-      
+
       const response = await fetch(fileUrl);
-      const buffer = Buffer.from(await response.arrayBuffer());
+      const arrayBuf = await response.arrayBuffer();
+      const buffer: Buffer = Buffer.from(new Uint8Array(arrayBuf));
 
       const prompts = await agent.analyzeAndGeneratePrompts(buffer, caption);
-      
+
       await ctx.reply("Ho generato " + prompts.length + " prompt. Ora creo le immagini...");
 
       let successCount = 0;
